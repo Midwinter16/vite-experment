@@ -1,4 +1,4 @@
 export const enum Names {
-  storeLogin = "storeLogin",
-  storeHome = "storeHome",
+  storeLogin = 'storeLogin',
+  storeHome = 'storeHome',
 }
