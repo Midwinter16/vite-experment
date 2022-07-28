@@ -4,6 +4,8 @@ src/assets
 
 *.min.js
 
+vite.config.js
+
 # Logs
 logs
 *.log
