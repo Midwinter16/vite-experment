@@ -4,14 +4,8 @@
       <div class="data-card-safe-name">
         {{ props.name }}
       </div>
-      <div
-        @click="editItem"
-        class="data-card-safe-edit iconfont icon-bianji"
-      ></div>
-      <div
-        @click="deleteItem"
-        class="data-card-safe-delete iconfont icon-shanchu"
-      ></div>
+      <div @click="editItem" class="data-card-safe-edit iconfont icon-bianji"></div>
+      <div @click="deleteItem" class="data-card-safe-delete iconfont icon-shanchu"></div>
     </div>
     <div class="data-card-warning" :class="showTips ? 'showTips' : ''">
       <div class="data-card-warning-info">
@@ -27,45 +21,45 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted, ref } from 'vue'
+import {defineProps, onMounted, ref} from 'vue'
 import '@/assets/icons/iconfont.css'
-import { storeHome } from '@/store/store'
+import {storeHome} from '@/store/store'
 // 初始化仓库
 const store_home = storeHome()
 
 type Props = {
-  name: string;
-  len: number;
-  typeLen: number;
-  id: number;
-};
+  name: string
+  len: number
+  typeLen: number
+  id: number
+}
 
 const props = defineProps<Props>()
 // 动画flag
 const showTips = ref<boolean>(false)
 // 编辑数据
 const editItem = () => {
-	store_home.$patch({
-		chooseId: props.id,
-		operate: 'edit',
-	})
+  store_home.$patch({
+    chooseId: props.id,
+    operate: 'edit',
+  })
 }
 // 删除数据
 const deleteItem = () => {
-	store_home.$patch({
-		chooseId: props.id,
-		operate: 'delete',
-	})
+  store_home.$patch({
+    chooseId: props.id,
+    operate: 'delete',
+  })
 }
 
 onMounted(() => {
-	const tips = document.querySelector('.tips')
-	tips?.addEventListener('mouseenter', () => {
-		showTips.value = true
-		tips.addEventListener('mouseout', () => {
-			showTips.value = false
-		})
-	})
+  const tips = document.querySelector('.tips')
+  tips?.addEventListener('mouseenter', () => {
+    showTips.value = true
+    tips.addEventListener('mouseout', () => {
+      showTips.value = false
+    })
+  })
 })
 </script>
 

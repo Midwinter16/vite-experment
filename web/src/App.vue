@@ -12,11 +12,7 @@
   height: 100%;
   width: 100%;
   background: #4776e6; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #8e54e9,
-    #4776e6
-  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, #8e54e9, #4776e6); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(
     to right,
     #8e54e9,

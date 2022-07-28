@@ -2,30 +2,10 @@
   <div class="login animate__animated animate__bounceIn">
     <!-- 登录表单 -->
     <form class="login-main" action="#">
-      <span
-        v-if="!isShow"
-        class="login-main-title animate__animated animate__fadeInDown"
-        >{{ init }}</span
-      >
-      <span
-        v-else
-        class="login-main-title animate__animated animate__fadeInDown"
-        >{{ title }}</span
-      >
-      <input
-        id="userInput"
-        class="login-main-input"
-        type="text"
-        placeholder="用户名"
-        autocomplete="off"
-      />
-      <input
-        class="login-main-input"
-        type="password"
-        placeholder="密码"
-        id="pwdInput"
-        autocomplete="off"
-      />
+      <span v-if="!isShow" class="login-main-title animate__animated animate__fadeInDown">{{ init }}</span>
+      <span v-else class="login-main-title animate__animated animate__fadeInDown">{{ title }}</span>
+      <input id="userInput" class="login-main-input" type="text" placeholder="用户名" autocomplete="off" />
+      <input class="login-main-input" type="password" placeholder="密码" id="pwdInput" autocomplete="off" />
       <input
         v-show="!isUnregistered"
         class="login-main-input animate__animated animate__fadeIn"
@@ -35,22 +15,10 @@
         autocomplete="off"
       />
       <div class="">
-        <el-checkbox
-          label="7天内保持登录状态"
-          v-model="remAcc"
-          size="small"
-        ></el-checkbox>
-        <el-checkbox
-          label="展示密码"
-          v-model="showPwd"
-          size="small"
-        ></el-checkbox>
+        <el-checkbox label="7天内保持登录状态" v-model="remAcc" size="small"></el-checkbox>
+        <el-checkbox label="展示密码" v-model="showPwd" size="small"></el-checkbox>
       </div>
-      <button
-        class="login-main-button login-main-button-login"
-        @click="login"
-        style="cursor: pointer"
-      >
+      <button class="login-main-button login-main-button-login" @click="login" style="cursor: pointer">
         <span class="btn-value">{{ btnValue }}</span>
       </button>
       <span class="login-main-tips">可以通过输入想要的用户名直接注册</span>
@@ -59,11 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import { getUserInfo, userLogin, userRegister } from '@/api/index'
-import { debounce } from '@/public/pts'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'
+import {ref, onMounted, watch} from 'vue'
+import {getUserInfo, userLogin, userRegister} from '@/api/index'
+import {debounce} from '@/public/pts'
+import {ElMessage, ElMessageBox} from 'element-plus'
+import {useRouter} from 'vue-router'
 
 document.title = '登录页面'
 
@@ -87,158 +55,154 @@ const showPwd = ref<boolean>(false)
 // 监听title更改注册和登录状态
 // watch(title, (newVal: string, oldVal: string) => {
 watch(title, (newVal: string) => {
-	const btn = document.querySelector('.login-main-button')
-	const tips = document.querySelector('.login-main-tips')
-	if (newVal == '该用户未注册') {
-		isUnregistered.value = false
-		btnValue.value = '注册'
-		btn?.classList.remove('login-main-button-login')
-		btn?.classList.add('login-main-button-register')
-		tips?.classList.remove('low-light')
-		tips?.classList.add('high-light')
-		showPwd.value = true
-	} else {
-		isUnregistered.value = true
-		btnValue.value = '登录'
-		btn?.classList.remove('login-main-button-register')
-		btn?.classList.add('login-main-button-login')
-		tips?.classList.remove('high-light')
-		tips?.classList.add('low-light')
-		showPwd.value = false
-	}
+  const btn = document.querySelector('.login-main-button')
+  const tips = document.querySelector('.login-main-tips')
+  if (newVal == '该用户未注册') {
+    isUnregistered.value = false
+    btnValue.value = '注册'
+    btn?.classList.remove('login-main-button-login')
+    btn?.classList.add('login-main-button-register')
+    tips?.classList.remove('low-light')
+    tips?.classList.add('high-light')
+    showPwd.value = true
+  } else {
+    isUnregistered.value = true
+    btnValue.value = '登录'
+    btn?.classList.remove('login-main-button-register')
+    btn?.classList.add('login-main-button-login')
+    tips?.classList.remove('high-light')
+    tips?.classList.add('low-light')
+    showPwd.value = false
+  }
 })
 // 监听showPwd更改密码展示状态
 // watch(showPwd, (newVal, oldVal) => {
 watch(showPwd, (newVal) => {
-	const pwdInput = document.querySelector('#pwdInput') as HTMLInputElement
-	const pwdAgainInput = document.querySelector(
-		'#pwdAgainInput'
-	) as HTMLInputElement
-	if (newVal) {
-		pwdInput.setAttribute('type', 'text')
-		pwdAgainInput.setAttribute('type', 'text')
-	} else {
-		pwdInput.setAttribute('type', 'password')
-		pwdAgainInput.setAttribute('type', 'password')
-	}
+  const pwdInput = document.querySelector('#pwdInput') as HTMLInputElement
+  const pwdAgainInput = document.querySelector('#pwdAgainInput') as HTMLInputElement
+  if (newVal) {
+    pwdInput.setAttribute('type', 'text')
+    pwdAgainInput.setAttribute('type', 'text')
+  } else {
+    pwdInput.setAttribute('type', 'password')
+    pwdAgainInput.setAttribute('type', 'password')
+  }
 })
 
 // 点击登录，根据验证信息和是否注册来调用不同的API
 const login = async (e: any) => {
-	// 获取到用户输入框、密码输入框和登录按钮
-	const userInput = document.querySelector('#userInput') as HTMLInputElement
-	const pwdInput = document.querySelector('#pwdInput') as HTMLInputElement
-	const pwdAgainInput = document.querySelector(
-		'#pwdAgainInput'
-	) as HTMLInputElement
-	// 阻止默认行为
-	e.preventDefault()
-	// 验证过程，###以后改成正则表达式
-	let account = userInput.value
-	let password = pwdInput.value
-	if (account.length < 5) {
-		ElMessage.error('用户名不能少于5位有效字符~')
-		userInput.classList.add('biling')
-		setTimeout(() => {
-			userInput.classList.remove('biling')
-		}, 1500)
-		return
-	}
-	if (password.length < 5) {
-		ElMessage.error('用户密码不能少于5位有效字符~')
-		pwdInput.classList.add('biling')
-		setTimeout(() => {
-			pwdInput.classList.remove('biling')
-		}, 1500)
-		return
-	}
+  // 获取到用户输入框、密码输入框和登录按钮
+  const userInput = document.querySelector('#userInput') as HTMLInputElement
+  const pwdInput = document.querySelector('#pwdInput') as HTMLInputElement
+  const pwdAgainInput = document.querySelector('#pwdAgainInput') as HTMLInputElement
+  // 阻止默认行为
+  e.preventDefault()
+  // 验证过程，###以后改成正则表达式
+  let account = userInput.value
+  let password = pwdInput.value
+  if (account.length < 5) {
+    ElMessage.error('用户名不能少于5位有效字符~')
+    userInput.classList.add('biling')
+    setTimeout(() => {
+      userInput.classList.remove('biling')
+    }, 1500)
+    return
+  }
+  if (password.length < 5) {
+    ElMessage.error('用户密码不能少于5位有效字符~')
+    pwdInput.classList.add('biling')
+    setTimeout(() => {
+      pwdInput.classList.remove('biling')
+    }, 1500)
+    return
+  }
 
-	let info = {
-		account,
-		password,
-		remAcc: remAcc.value,
-	}
+  let info = {
+    account,
+    password,
+    remAcc: remAcc.value,
+  }
 
-	// 测试用户名是否被注册
-	if (!isUnregistered.value) {
-		// 确认两次密码是否一致，不一致时重置输入框
-		if (pwdAgainInput.value !== password) {
-			ElMessage.error('两次输入密码不一致')
-			pwdAgainInput.value = ''
-			pwdInput.value = ''
-			showPwd.value = true
-			pwdAgainInput.classList.add('biling')
-			setTimeout(() => {
-				pwdAgainInput.classList.remove('biling')
-			}, 1500)
-			return
-		}
-		// 再次确认是否要以该账号名称创建账号，创建后刷新页面（###以后是直接跳转到主页面）
-		ElMessageBox.confirm(`确定要以${account}为账号名注册账号吗？`, '注册提示', {
-			confirmButtonText: '确认',
-			cancelButtonText: '我再想想',
-			type: 'info',
-		}).then(async () => {
-			await userRegister(info)
-			setTimeout(async () => {
-				// 3秒跳转到主页
-				await userLogin(info)
-				router.push('/home')
-			}, 3000)
-		})
-	} else {
-		// 验证用户密码
-		const { data: res } = await userLogin(info)
-		if (!res) {
-			pwdInput.value = ''
-			return
-		} else {
-			// 跳转到主页
-			router.push('/home')
-		}
-	}
+  // 测试用户名是否被注册
+  if (!isUnregistered.value) {
+    // 确认两次密码是否一致，不一致时重置输入框
+    if (pwdAgainInput.value !== password) {
+      ElMessage.error('两次输入密码不一致')
+      pwdAgainInput.value = ''
+      pwdInput.value = ''
+      showPwd.value = true
+      pwdAgainInput.classList.add('biling')
+      setTimeout(() => {
+        pwdAgainInput.classList.remove('biling')
+      }, 1500)
+      return
+    }
+    // 再次确认是否要以该账号名称创建账号，创建后刷新页面（###以后是直接跳转到主页面）
+    ElMessageBox.confirm(`确定要以${account}为账号名注册账号吗？`, '注册提示', {
+      confirmButtonText: '确认',
+      cancelButtonText: '我再想想',
+      type: 'info',
+    }).then(async () => {
+      await userRegister(info)
+      setTimeout(async () => {
+        // 3秒跳转到主页
+        await userLogin(info)
+        router.push('/home')
+      }, 3000)
+    })
+  } else {
+    // 验证用户密码
+    const {data: res} = await userLogin(info)
+    if (!res) {
+      pwdInput.value = ''
+      return
+    } else {
+      // 跳转到主页
+      router.push('/home')
+    }
+  }
 }
 
 // 输入用户名验证用户是否存在，改变title标题显示，切换注册或登录等
 const watchTitle = () => {
-	const userInput = document.querySelector('#userInput') as HTMLInputElement
-	userInput.onkeyup = debounce(async () => {
-		// 先置为false
-		isShow.value = false
-		const { data: res } = await getUserInfo(userInput.value)
-		// 切换登录title
-		if (userInput.value == '') {
-			// 特判输入为空时
-			title.value = 'Login'
-			isUnregistered.value = false
-		} else if (res.name) {
-			isUnregistered.value = true
-			title.value = `Hello~${res.name}`
-		} else {
-			isUnregistered.value = false
-			title.value = '该用户未注册'
-		}
+  const userInput = document.querySelector('#userInput') as HTMLInputElement
+  userInput.onkeyup = debounce(async () => {
+    // 先置为false
+    isShow.value = false
+    const {data: res} = await getUserInfo(userInput.value)
+    // 切换登录title
+    if (userInput.value == '') {
+      // 特判输入为空时
+      title.value = 'Login'
+      isUnregistered.value = false
+    } else if (res.name) {
+      isUnregistered.value = true
+      title.value = `Hello~${res.name}`
+    } else {
+      isUnregistered.value = false
+      title.value = '该用户未注册'
+    }
 
-		// 将得到的用户名展示，通过切换标签达到动画效果
-		isShow.value = true
-		// 将被保存用户名称的标题重置
-		init.value = 'Login'
-	}, 1000) as any
+    // 将得到的用户名展示，通过切换标签达到动画效果
+    isShow.value = true
+    // 将被保存用户名称的标题重置
+    init.value = 'Login'
+  }, 1000) as any
 }
 
 // 检查token是否存在，存在直接触发携带token的login
 const initLogin = async () => {
-	if (localStorage.getItem('token')) {
-		const info = await userLogin()
-		if (info.status == 200) {
-			router.push('/home')
-		}
-	}
+  if (localStorage.getItem('token')) {
+    const info = await userLogin()
+    if (info.status == 200) {
+      router.push('/home')
+    }
+  }
 }
 
 onMounted(() => {
-	watchTitle()
-	initLogin()
+  watchTitle()
+  initLogin()
 })
 </script>
 
@@ -292,11 +256,7 @@ onMounted(() => {
     }
     &-button-login {
       background: #4776e6; /* fallback for old browsers */
-      background: -webkit-linear-gradient(
-        to right,
-        #8e54e9,
-        #4776e6
-      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: -webkit-linear-gradient(to right, #8e54e9, #4776e6); /* Chrome 10-25, Safari 5.1-6 */
       background: linear-gradient(
         to right,
         #8e54e9,
@@ -305,11 +265,7 @@ onMounted(() => {
     }
     &-button-register {
       background: #f2709c; /* fallback for old browsers */
-      background: -webkit-linear-gradient(
-        to top,
-        #ff9472,
-        #f2709c
-      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: -webkit-linear-gradient(to top, #ff9472, #f2709c); /* Chrome 10-25, Safari 5.1-6 */
       background: linear-gradient(
         to top,
         #ff9472,

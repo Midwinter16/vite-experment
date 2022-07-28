@@ -10,14 +10,14 @@
 
 <script setup lang="ts">
 import '@/assets/icons/iconfont.css'
-import { defineProps } from 'vue'
+import {defineProps} from 'vue'
 type Props = {
-  title: string;
-  date: string;
-  imgType: string;
-};
+  title: string
+  date: string
+  imgType: string
+}
 withDefaults(defineProps<Props>(), {
-	title: '默认标题',
+  title: '默认标题',
 })
 </script>
 
