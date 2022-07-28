@@ -19,20 +19,20 @@
 </template>
 
 <script setup lang="ts">
-import "@/assets/icons/iconfont.css";
-import "animate.css";
-import card from "@/components/card.vue";
-import { useRouter } from "vue-router";
+import '@/assets/icons/iconfont.css'
+import 'animate.css'
+import card from '@/components/card.vue'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
 const createNew = () => {
-  router.push("/home/create");
-};
+	router.push('/home/create')
+}
 
 const jumphome = () => {
-  router.go(-1);
-};
+	router.go(-1)
+}
 </script>
 
 <style lang="less" scoped>

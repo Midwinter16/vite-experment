@@ -127,26 +127,24 @@
 </template>
 
 <script setup lang="ts">
-import cCharts from "./chart.vue";
-import { ref, reactive, nextTick, watch, watchEffect, onMounted } from "vue";
-import { debounce } from "@/public/pts";
-import dataCard from "@/components/dataCard.vue";
-import "@/assets/icons/iconfont.css";
-import type { FormRules, FormInstance } from "element-plus";
-import { storeHome } from "@/store/store";
+import cCharts from './chart.vue'
+import { ref, reactive, nextTick, watch, watchEffect, onMounted } from 'vue'
+import { debounce } from '@/public/pts'
+import dataCard from '@/components/dataCard.vue'
+import '@/assets/icons/iconfont.css'
+import type { FormRules, FormInstance } from 'element-plus'
+import { storeHome } from '@/store/store'
 
 // 控制图表假更新（通过移除组件实现更新）
-const isShow = ref<boolean>(true);
+const isShow = ref<boolean>(true)
 // 判断图表类型
-const isBar = ref<boolean>(true);
-const isLine = ref<boolean>(true);
+const isBar = ref<boolean>(true)
+const isLine = ref<boolean>(true)
 // 控制form表单标题位置
 const labelPosition =
-  document.documentElement.clientWidth < 992
-    ? ref<string>("top")
-    : ref<string>("right");
+  document.documentElement.clientWidth < 992 ? ref<string>('top') : ref<string>('right')
 // 对话框
-const dialogFormVisible = ref<boolean>(false);
+const dialogFormVisible = ref<boolean>(false)
 
 // 数据类型
 type seriesItem = {
@@ -168,22 +166,22 @@ type chart = {
 };
 // 数据模型
 const chartsData: chart = reactive({
-  title: ref<string>("默认标题"),
-  chartType: ref<string>("line"),
-  xlabel: ref<string>("衬衫,羊毛衫,雪纺衫,裤子,高跟鞋,袜子"),
-  series: reactive([
-    {
-      _id: Date.parse(Date()),
-      name: "销量",
-      data: "5, 20, 36, 10, 10, 20",
-    },
-  ]),
-  tooltips: ref<string[]>(["y轴辅助线", "x轴辅助线", "平均值", "双极值"]),
-  filters: ref<string[]>(["类别筛选"]),
-  boundaryGap: ref<boolean>(true),
-  smooth: ref<boolean>(false),
-  circle: ref<boolean>(false),
-});
+	title: ref<string>('默认标题'),
+	chartType: ref<string>('line'),
+	xlabel: ref<string>('衬衫,羊毛衫,雪纺衫,裤子,高跟鞋,袜子'),
+	series: reactive([
+		{
+			_id: Date.parse(Date()),
+			name: '销量',
+			data: '5, 20, 36, 10, 10, 20',
+		},
+	]),
+	tooltips: ref<string[]>(['y轴辅助线', 'x轴辅助线', '平均值', '双极值']),
+	filters: ref<string[]>(['类别筛选']),
+	boundaryGap: ref<boolean>(true),
+	smooth: ref<boolean>(false),
+	circle: ref<boolean>(false),
+})
 
 // 暂存数据模型
 type temp = {
@@ -191,126 +189,127 @@ type temp = {
   data: string;
 };
 const tempData: temp = reactive({
-  name: ref<string>(""),
-  data: ref<string>(""),
-});
+	name: ref<string>(''),
+	data: ref<string>(''),
+})
 
 // 暂存数据模型验证规则
-const tempRuleFormRef = ref<FormInstance>();
+const tempRuleFormRef = ref<FormInstance>()
 const tempRules = reactive<FormRules>({
-  name: [{ required: true, message: "数据类型是必填项", trigger: "blur" }],
-  data: [{ required: true, message: "数据是必填项", trigger: "blur" }],
-});
+	name: [{ required: true, message: '数据类型是必填项', trigger: 'blur' }],
+	data: [{ required: true, message: '数据是必填项', trigger: 'blur' }],
+})
 
 // 初始化仓库
-const store_home = storeHome();
+const store_home = storeHome()
 // 监听仓库
 store_home.$subscribe((mutation, state) => {
-  // 如果是editId改变了，说明是子组件触发的编辑或者是删除
-  if (state.chooseId) {
-    if (state.operate == "edit") {
-      let chooseItem = chartsData.series.filter((ele: any) => {
-        return ele._id == state.chooseId;
-      })[0];
-      tempData.name = chooseItem.name;
-      tempData.data = chooseItem.data;
-      dialogFormVisible.value = true;
-    } else if (state.operate == "delete") {
-      chartsData.series = chartsData.series.filter((ele: any) => {
-        return ele._id != state.chooseId;
-      });
-      store_home.$reset();
-    }
-  }
-});
+	// 如果是editId改变了，说明是子组件触发的编辑或者是删除
+	if (state.chooseId) {
+		if (state.operate == 'edit') {
+			let chooseItem = chartsData.series.filter((ele: any) => {
+				return ele._id == state.chooseId
+			})[0]
+			tempData.name = chooseItem.name
+			tempData.data = chooseItem.data
+			dialogFormVisible.value = true
+		} else if (state.operate == 'delete') {
+			chartsData.series = chartsData.series.filter((ele: any) => {
+				return ele._id != state.chooseId
+			})
+			store_home.$reset()
+		}
+	}
+})
 
 // 多选选项
 const options = [
-  { value: "bar", label: "柱状图" },
-  { value: "line", label: "折线图" },
-];
+	{ value: 'bar', label: '柱状图' },
+	{ value: 'line', label: '折线图' },
+]
 
 // 预览
 const preview = () => {
-  isShow.value = false;
-  nextTick(() => {
-    isShow.value = true;
-  });
-};
+	isShow.value = false
+	nextTick(() => {
+		isShow.value = true
+	})
+}
 
 // 增加数据显示对话框
 const addData = () => {
-  dialogFormVisible.value = true;
-};
+	dialogFormVisible.value = true
+}
 // 取消操作，重置pinia状态，重置tempData
 const cancelCreate = () => {
-  dialogFormVisible.value = false;
-  tempData.name = "";
-  tempData.data = "";
-  store_home.$reset();
-};
+	dialogFormVisible.value = false
+	tempData.name = ''
+	tempData.data = ''
+	store_home.$reset()
+}
 // 将数据调整格式后转移到chartsData，并且增加一个数据集组件
 const createData = async (formEl: FormInstance | undefined) => {
-  // 验证暂存表单
-  if (!formEl) return;
-  await formEl.validate((valid, fields) => {
-    if (valid) {
-      dialogFormVisible.value = false;
-      // 判断是否是编辑状态
-      if (store_home.operate == "edit") {
-        chartsData.series = chartsData.series.map((ele: any) => {
-          if (store_home.chooseId == ele._id) {
-            return {
-              _id: ele._id,
-              name: tempData.name,
-              data: tempData.data,
-            };
-          } else {
-            return ele;
-          }
-        });
-        // 重置仓库状态
-        store_home.$reset();
-      } else {
-        chartsData.series.push({
-          _id: Date.parse(Date().toString()),
-          name: tempData.name,
-          data: tempData.data,
-        });
-      }
-      tempData.name = "";
-      tempData.data = "";
-    } else {
-      console.log("error submit!", fields);
-    }
-  });
-};
+	// 验证暂存表单
+	if (!formEl) return
+	await formEl.validate((valid, fields) => {
+		if (valid) {
+			dialogFormVisible.value = false
+			// 判断是否是编辑状态
+			if (store_home.operate == 'edit') {
+				chartsData.series = chartsData.series.map((ele: any) => {
+					if (store_home.chooseId == ele._id) {
+						return {
+							_id: ele._id,
+							name: tempData.name,
+							data: tempData.data,
+						}
+					} else {
+						return ele
+					}
+				})
+				// 重置仓库状态
+				store_home.$reset()
+			} else {
+				chartsData.series.push({
+					_id: Date.parse(Date().toString()),
+					name: tempData.name,
+					data: tempData.data,
+				})
+			}
+			tempData.name = ''
+			tempData.data = ''
+		} else {
+			console.log('error submit!', fields)
+		}
+	})
+}
 
 // 监听chartsData变化节流更新预览图
-watch(chartsData, debounce(preview, 1000) as any);
+watch(chartsData, debounce(preview, 1000) as any)
 // 监听图表类型改变对应选项是否出现
-watchEffect((oninvalidate) => {
-  isBar.value = false;
-  isLine.value = false;
-  switch (chartsData.chartType) {
-    case "bar":
-      isBar.value = true;
-      break;
-    case "line":
-      isLine.value = true;
-      break;
-  }
-});
+// watchEffect((oninvalidate) => {
+watchEffect(() => {
+	isBar.value = false
+	isLine.value = false
+	switch (chartsData.chartType) {
+	case 'bar':
+		isBar.value = true
+		break
+	case 'line':
+		isLine.value = true
+		break
+	}
+})
 
 onMounted(() => {
-  window.addEventListener("resize", () => {
-    if (document.documentElement.clientWidth < 992) {
-      labelPosition.value = "top";
-    } else {
-      labelPosition.value = "right";
-    }
-  });
-});
+	window.addEventListener('resize', () => {
+		if (document.documentElement.clientWidth < 992) {
+			labelPosition.value = 'top'
+		} else {
+			labelPosition.value = 'right'
+		}
+	})
+})
 </script>
 
 <style lang="less" scoped>

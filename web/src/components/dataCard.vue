@@ -27,11 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted, ref } from "vue";
-import "@/assets/icons/iconfont.css";
-import { storeHome } from "@/store/store";
+import { defineProps, onMounted, ref } from 'vue'
+import '@/assets/icons/iconfont.css'
+import { storeHome } from '@/store/store'
 // 初始化仓库
-const store_home = storeHome();
+const store_home = storeHome()
 
 type Props = {
   name: string;
@@ -40,33 +40,33 @@ type Props = {
   id: number;
 };
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 // 动画flag
-const showTips = ref<boolean>(false);
+const showTips = ref<boolean>(false)
 // 编辑数据
 const editItem = () => {
-  store_home.$patch({
-    chooseId: props.id,
-    operate: "edit",
-  });
-};
+	store_home.$patch({
+		chooseId: props.id,
+		operate: 'edit',
+	})
+}
 // 删除数据
 const deleteItem = () => {
-  store_home.$patch({
-    chooseId: props.id,
-    operate: "delete",
-  });
-};
+	store_home.$patch({
+		chooseId: props.id,
+		operate: 'delete',
+	})
+}
 
 onMounted(() => {
-  const tips = document.querySelector(".tips");
-  tips?.addEventListener("mouseenter", () => {
-    showTips.value = true;
-    tips.addEventListener("mouseout", () => {
-      showTips.value = false;
-    });
-  });
-});
+	const tips = document.querySelector('.tips')
+	tips?.addEventListener('mouseenter', () => {
+		showTips.value = true
+		tips.addEventListener('mouseout', () => {
+			showTips.value = false
+		})
+	})
+})
 </script>
 
 <style lang="less">

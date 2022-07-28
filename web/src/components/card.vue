@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="big-card">
     <div class="card-info hidden-info">
       <div class="card-info-title">{{ title }}</div>
       <div class="card-info-date">{{ date }}</div>
@@ -9,20 +9,20 @@
 </template>
 
 <script setup lang="ts">
-import "@/assets/icons/iconfont.css";
-import { defineProps } from "vue";
+import '@/assets/icons/iconfont.css'
+import { defineProps } from 'vue'
 type Props = {
   title: string;
   date: string;
   imgType: string;
 };
 withDefaults(defineProps<Props>(), {
-  title: "默认标题",
-});
+	title: '默认标题',
+})
 </script>
 
 <style lang="less">
-.card {
+.big-card {
   background-color: white;
   border-radius: 0.2rem;
   overflow: hidden;
