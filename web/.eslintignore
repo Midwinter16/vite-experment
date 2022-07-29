@@ -4,7 +4,7 @@ src/assets
 
 *.min.js
 
-src/lib/dayjs.min.js
+*.min.js
 
 vite.config.ts
 

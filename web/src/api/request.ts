@@ -20,6 +20,34 @@ import {ElMessage} from 'element-plus'
 //       axios.defaults.baseURL='http://api.kaifa.cn'
 //   }
 
+const RESPONSE_INFO_MAP = {
+  ERROR: 'error',
+  SUCCESS: 'success',
+}
+
+const RESPONSE_MESSAGE_MAP = {
+  JWT_EXPIRED: 'jwt expired',
+  PASSWORD_ERROR: 'user password error',
+  REGISTRATION_SUCCESS: 'user registration success',
+  LOGIN_SUCCESS: 'login success',
+}
+
+const RESPONSE_MESSAGE_TEXT_MAP = {
+  [RESPONSE_MESSAGE_MAP.JWT_EXPIRED]: {
+    MESSAGE: '用户验证登录过期，请重新登录',
+    STATUS: 401,
+  },
+  [RESPONSE_MESSAGE_MAP.PASSWORD_ERROR]: {
+    MESSAGE: 'ohh，用户密码错误~',
+  },
+  [RESPONSE_MESSAGE_MAP.REGISTRATION_SUCCESS]: {
+    MESSAGE: '注册成功！3秒后跳转到主页',
+  },
+  [RESPONSE_MESSAGE_MAP.LOGIN_SUCCESS]: {
+    MESSAGE: '用户登录成功！',
+  },
+}
+
 const service = axios.create({
   //基础路径
   baseURL: 'http://localhost:8000/api',
@@ -46,26 +74,24 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     // 错误信息状态
-    if (response.data.info == 'error') {
+    if (response.data.info === RESPONSE_INFO_MAP.ERROR) {
       // 如果登录状态过期
-      if (response.data.message == 'jwt expired') {
+      if (response.data.message === RESPONSE_MESSAGE_MAP.JWT_EXPIRED) {
         localStorage.removeItem('token')
-        ElMessage.warning('用户验证登录过期，请重新登录')
+        ElMessage.warning(RESPONSE_MESSAGE_TEXT_MAP[RESPONSE_MESSAGE_MAP.JWT_EXPIRED].MESSAGE)
         response.status = 401
       }
       // 密码错误
-      if (response.data.message == 'user password error') {
-        ElMessage.error('ohh，用户密码错误~')
-        response.data = false
+      if (response.data.message === RESPONSE_MESSAGE_MAP.PASSWORD_ERROR) {
+        ElMessage.error(RESPONSE_MESSAGE_TEXT_MAP[RESPONSE_MESSAGE_MAP.PASSWORD_ERROR].MESSAGE)
+        response.data = null
       }
     }
     // 成功信息状态
-    if (response.data.info == 'success') {
-      if (response.data.message == 'user registration success') {
-        ElMessage.success('注册成功！3秒后跳转到主页')
-      }
-      if (response.data.message == 'login success') {
-        ElMessage.success('用户登录成功！')
+    if (response.data.info == RESPONSE_INFO_MAP.SUCCESS) {
+      const responseDataMessage = response.data.message
+      if (response.data.message == RESPONSE_MESSAGE_MAP.REGISTRATION_SUCCESS) {
+        ElMessage.success(RESPONSE_MESSAGE_TEXT_MAP[responseDataMessage].MESSAGE)
       }
       // 如果传回了token则保存
       if (response.data.haveToken) {
