@@ -99,6 +99,7 @@
       <div class="create-main-btn">
         <el-button class="btn-save" type="success">保存图表</el-button>
         <el-button class="btn-standby" type="warning">备用按钮</el-button>
+        <el-button class="btn-standby" @click="navToHome">关闭</el-button>
       </div>
     </div>
   </div>
@@ -112,6 +113,7 @@ import dataCard from '@/components/dataCard.vue'
 import '@/assets/icons/iconfont.css'
 import type {FormRules, FormInstance} from 'element-plus'
 import {storeHome} from '@/store/store'
+import {useRouter} from 'vue-router'
 
 // 控制图表假更新（通过移除组件实现更新）
 const isShow = ref<boolean>(true)
@@ -122,6 +124,9 @@ const isLine = ref<boolean>(true)
 const labelPosition = document.documentElement.clientWidth < 992 ? ref<string>('top') : ref<string>('right')
 // 对话框
 const dialogFormVisible = ref<boolean>(false)
+
+// 路由
+const router = useRouter()
 
 // 数据类型
 type seriesItem = {
@@ -183,16 +188,16 @@ const store_home = storeHome()
 store_home.$subscribe((mutation, state) => {
   // 如果是editId改变了，说明是子组件触发的编辑或者是删除
   if (state.chooseId) {
-    if (state.operate == 'edit') {
-      let chooseItem = chartsData.series.filter((ele: any) => {
-        return ele._id == state.chooseId
+    if (state.operate === 'edit') {
+      const chooseItem = chartsData.series.filter((ele: any) => {
+        return ele._id === state.chooseId
       })[0]
       tempData.name = chooseItem.name
       tempData.data = chooseItem.data
       dialogFormVisible.value = true
     } else if (state.operate == 'delete') {
       chartsData.series = chartsData.series.filter((ele: any) => {
-        return ele._id != state.chooseId
+        return ele._id !== state.chooseId
       })
       store_home.$reset()
     }
@@ -234,15 +239,14 @@ const createData = async (formEl: FormInstance | undefined) => {
       // 判断是否是编辑状态
       if (store_home.operate == 'edit') {
         chartsData.series = chartsData.series.map((ele: any) => {
-          if (store_home.chooseId == ele._id) {
+          if (store_home.chooseId === ele._id) {
             return {
               _id: ele._id,
               name: tempData.name,
               data: tempData.data,
             }
-          } else {
-            return ele
           }
+          return ele
         })
         // 重置仓库状态
         store_home.$reset()
@@ -280,13 +284,13 @@ watchEffect(() => {
 
 onMounted(() => {
   window.addEventListener('resize', () => {
-    if (document.documentElement.clientWidth < 992) {
-      labelPosition.value = 'top'
-    } else {
-      labelPosition.value = 'right'
-    }
+    labelPosition.value = document.documentElement.clientWidth < 992 ? 'top' : 'right'
   })
 })
+
+const navToHome = () => {
+  router.go(-1)
+}
 </script>
 
 <style lang="less" scoped>

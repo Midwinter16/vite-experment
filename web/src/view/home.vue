@@ -5,13 +5,7 @@
         <div @click="createNew" class="list-data-add">
           <div class="list-data-add-icon iconfont icon-jia"></div>
         </div>
-        <card
-          @click="jumphome"
-          class="list-data-item"
-          title="测试标题"
-          date="测试日期"
-          imgType="icon-icon-line-graph"
-        ></card>
+        <!-- <card class="list-data-item" title="测试标题" date="测试日期" imgType="icon-icon-line-graph"></card> -->
       </div>
     </div>
     <router-view></router-view>
@@ -21,7 +15,7 @@
 <script setup lang="ts">
 import '@/assets/icons/iconfont.css'
 import 'animate.css'
-import card from '@/components/card.vue'
+// import card from '@/components/card.vue'
 import {useRouter} from 'vue-router'
 
 const router = useRouter()
@@ -30,9 +24,9 @@ const createNew = () => {
   router.push('/home/create')
 }
 
-const jumphome = () => {
-  router.go(-1)
-}
+// const jumphome = () => {
+//   router.go(-1)
+// }
 </script>
 
 <style lang="less" scoped>

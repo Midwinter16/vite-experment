@@ -57,36 +57,28 @@ const showPwd = ref<boolean>(false)
 watch(title, (newVal: string) => {
   const btn = document.querySelector('.login-main-button')
   const tips = document.querySelector('.login-main-tips')
-  if (newVal == '该用户未注册') {
-    isUnregistered.value = false
-    btnValue.value = '注册'
-    btn?.classList.remove('login-main-button-login')
-    btn?.classList.add('login-main-button-register')
-    tips?.classList.remove('low-light')
-    tips?.classList.add('high-light')
-    showPwd.value = true
-  } else {
-    isUnregistered.value = true
-    btnValue.value = '登录'
-    btn?.classList.remove('login-main-button-register')
-    btn?.classList.add('login-main-button-login')
-    tips?.classList.remove('high-light')
-    tips?.classList.add('low-light')
-    showPwd.value = false
-  }
+  isUnregistered.value = newVal !== '该用户未注册'
+  btnValue.value = newVal === '该用户未注册' ? '注册' : '登录'
+  btn?.classList.remove(newVal === '该用户未注册' ? 'login-main-button-login' : 'login-main-button-register')
+  btn?.classList.add(newVal === '该用户未注册' ? 'login-main-button-register' : 'login-main-button-login')
+  tips?.classList.remove(newVal === '该用户未注册' ? 'low-light' : 'high-light')
+  tips?.classList.add(newVal === '该用户未注册' ? 'high-light' : 'low-light')
+  showPwd.value = newVal === '该用户未注册'
 })
 // 监听showPwd更改密码展示状态
 // watch(showPwd, (newVal, oldVal) => {
 watch(showPwd, (newVal) => {
   const pwdInput = document.querySelector('#pwdInput') as HTMLInputElement
   const pwdAgainInput = document.querySelector('#pwdAgainInput') as HTMLInputElement
-  if (newVal) {
-    pwdInput.setAttribute('type', 'text')
-    pwdAgainInput.setAttribute('type', 'text')
-  } else {
-    pwdInput.setAttribute('type', 'password')
-    pwdAgainInput.setAttribute('type', 'password')
-  }
+  pwdInput.setAttribute('type', newVal ? 'text' : 'password')
+  pwdAgainInput.setAttribute('type', newVal ? 'text' : 'password')
+  // if (newVal) {
+  //   pwdInput.setAttribute('type', 'text')
+  //   pwdAgainInput.setAttribute('type', 'text')
+  // } else {
+  //   pwdInput.setAttribute('type', 'password')
+  //   pwdAgainInput.setAttribute('type', 'password')
+  // }
 })
 
 // 点击登录，根据验证信息和是否注册来调用不同的API

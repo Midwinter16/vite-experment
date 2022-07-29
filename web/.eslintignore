@@ -4,6 +4,8 @@ src/assets
 
 *.min.js
 
+src/lib/dayjs.min.js
+
 vite.config.ts
 
 # Logs
