@@ -4,14 +4,29 @@
     <form class="login-main" action="#">
       <span v-if="!isShow" class="login-main-title animate__animated animate__fadeInDown">{{ init }}</span>
       <span v-else class="login-main-title animate__animated animate__fadeInDown">{{ title }}</span>
-      <input ref="userInputRef" id="userInput" class="login-main-input" :class="userInputAuthFlag?'biling':''" type="text" placeholder="用户名" autocomplete="off" />
-      <input ref="passwordRef" class="login-main-input"
-      :class="pwdInputAuthFlag?'biling':''"  type="password" placeholder="密码" id="pwdInput" autocomplete="off" />
+      <input
+        ref="userInputRef"
+        id="userInput"
+        class="login-main-input"
+        :class="userInputAuthFlag ? 'biling' : ''"
+        type="text"
+        placeholder="用户名"
+        autocomplete="off"
+      />
+      <input
+        ref="passwordRef"
+        class="login-main-input"
+        :class="pwdInputAuthFlag ? 'biling' : ''"
+        type="password"
+        placeholder="密码"
+        id="pwdInput"
+        autocomplete="off"
+      />
       <input
         ref="againPasswordRef"
         v-show="!isUnregistered"
         class="login-main-input animate__animated animate__fadeIn"
-        :class="againPwdInputAuthFlag?'biling':''"
+        :class="againPwdInputAuthFlag ? 'biling' : ''"
         type="password"
         placeholder="再次输入密码"
         id="pwdAgainInput"
@@ -21,10 +36,19 @@
         <el-checkbox label="7天内保持登录状态" v-model="remAcc" size="small"></el-checkbox>
         <el-checkbox label="展示密码" v-model="showPwd" size="small"></el-checkbox>
       </div>
-      <button ref="submitBtnRef" class="login-main-button login-main-button-login" @click="login" style="cursor: pointer">
-        <span class="btn-value">{{ btnValue }}</span>
+      <button
+        ref="submitBtnRef"
+        class="login-main-button login-main-button-login"
+        :class="isUnregistered ? 'login-main-button-login' : 'login-main-button-register'"
+        @click="login"
+        style="cursor: pointer"
+      >
+        <!-- <span class="btn-value">{{ btnValue }}</span> -->
+        <span class="btn-value">{{ !isUnregistered ? '注册' : '登录' }}</span>
       </button>
-      <span ref="tipsRef" class="login-main-tips">可以通过输入想要的用户名直接注册</span>
+      <span ref="tipsRef" class="login-main-tips" :class="isUnregistered ? 'low-light' : 'high-light'"
+        >可以通过输入想要的用户名直接注册</span
+      >
     </form>
   </div>
 </template>
@@ -51,7 +75,7 @@ const isShow = ref<boolean>(false)
 // 7天保持登录
 const remAcc = ref<boolean>(true)
 // 按钮信息
-const btnValue = ref<string>('登录')
+// const btnValue = ref<string>('登录')
 // 展示密码
 const showPwd = ref<boolean>(false)
 // 用户名输入框DOM
@@ -74,15 +98,9 @@ const tipsRef = ref()
 // 监听title更改注册和登录状态
 // watch(title, (newVal: string, oldVal: string) => {
 watch(title, (newVal: string) => {
-  const btn = submitBtnRef.value
-  const tips = tipsRef.value
   isUnregistered.value = newVal !== '该用户未注册'
-  btnValue.value = newVal === '该用户未注册' ? '注册' : '登录'
-  btn?.classList.remove(newVal === '该用户未注册' ? 'login-main-button-login' : 'login-main-button-register')
-  btn?.classList.add(newVal === '该用户未注册' ? 'login-main-button-register' : 'login-main-button-login')
-  tips?.classList.remove(newVal === '该用户未注册' ? 'low-light' : 'high-light')
-  tips?.classList.add(newVal === '该用户未注册' ? 'high-light' : 'low-light')
-  showPwd.value = newVal === '该用户未注册'
+  const isUnregisteredText = isUnregistered.value
+  showPwd.value = !isUnregisteredText
 })
 // 监听showPwd更改密码展示状态
 // watch(showPwd, (newVal, oldVal) => {
@@ -91,13 +109,6 @@ watch(showPwd, (newVal) => {
   const pwdAgainInput = againPasswordRef.value
   pwdInput.setAttribute('type', newVal ? 'text' : 'password')
   pwdAgainInput.setAttribute('type', newVal ? 'text' : 'password')
-  // if (newVal) {
-  //   pwdInput.setAttribute('type', 'text')
-  //   pwdAgainInput.setAttribute('type', 'text')
-  // } else {
-  //   pwdInput.setAttribute('type', 'password')
-  //   pwdAgainInput.setAttribute('type', 'password')
-  // }
 })
 
 // 点击登录，根据验证信息和是否注册来调用不同的API

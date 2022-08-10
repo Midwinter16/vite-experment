@@ -88,9 +88,9 @@ service.interceptors.response.use(
       }
     }
     // 成功信息状态
-    if (response.data.info == RESPONSE_INFO_MAP.SUCCESS) {
+    if (response.data.info === RESPONSE_INFO_MAP.SUCCESS) {
       const responseDataMessage = response.data.message
-      if (response.data.message == RESPONSE_MESSAGE_MAP.REGISTRATION_SUCCESS) {
+      if (response.data.message === RESPONSE_MESSAGE_MAP.REGISTRATION_SUCCESS) {
         ElMessage.success(RESPONSE_MESSAGE_TEXT_MAP[responseDataMessage].MESSAGE)
       }
       // 如果传回了token则保存
